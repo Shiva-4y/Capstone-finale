@@ -21,4 +21,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/api/wardrobe/{id}', [WardrobeController::class, 'show']);
     Route::put('/api/wardrobe/{id}', [WardrobeController::class, 'update']);
     Route::delete('/api/wardrobe/{id}', [WardrobeController::class, 'destroy']);
+    Route::get('/api/marketplace', [WardrobeController::class, 'marketplace']);
 });
+
+// Catch-all route for React Router (must be last)
+Route::get('/{any}', function () {
+    return view('welcome');
+})->where('any', '.*');

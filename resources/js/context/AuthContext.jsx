@@ -25,12 +25,20 @@ export const AuthProvider = ({ children }) => {
         headers: {
           'Content-Type': 'application/json',
           'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+          'Accept': 'application/json',
         },
+        credentials: 'same-origin',
       });
       
       if (response.ok) {
-        const data = await response.json();
-        setUser(data.user);
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          const data = await response.json();
+          setUser(data.user);
+        } else {
+          console.error('Auth check error: Expected JSON but got', contentType);
+          setUser(null);
+        }
       } else {
         setUser(null);
       }

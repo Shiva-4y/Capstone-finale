@@ -15,6 +15,53 @@ class WardrobeController extends Controller
         return response()->json(['items' => $items]);
     }
 
+    public function marketplace()
+    {
+        try {
+            // Fetch items that are marked for sale from other users
+            $items = WardrobeItem::with('user')
+                ->where('is_for_sale', true)
+                ->where('user_id', '!=', Auth::id())
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            // Transform the data to include seller information
+            $transformedItems = $items->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'name' => $item->name,
+                    'description' => $item->description,
+                    'category' => $item->category,
+                    'subcategory' => $item->subcategory,
+                    'color' => $item->color,
+                    'size' => $item->size,
+                    'brand' => $item->brand,
+                    'condition' => $item->condition,
+                    'price' => $item->price,
+                    'is_for_sale' => $item->is_for_sale,
+                    'image_path' => $item->image_path,
+                    'tags' => $item->tags,
+                    'seller' => [
+                        'id' => $item->user->id,
+                        'name' => $item->user->first_name . ' ' . $item->user->last_name,
+                        'location' => 'Lapu-Lapu City', // Default for now
+                        'distance' => '2.3 km', // Mock distance for now
+                        'rating' => 4.8, // Mock rating for now
+                        'reviews' => 12 // Mock reviews for now
+                    ],
+                    'views' => rand(10, 100), // Mock views for now
+                    'created_at' => $item->created_at,
+                    'updated_at' => $item->updated_at
+                ];
+            });
+
+            return response()->json(['items' => $transformedItems]);
+        } catch (\Exception $e) {
+            \Log::error('Error fetching marketplace items: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to fetch marketplace items'], 500);
+        }
+    }
+
     public function store(Request $request)
     {
         \Log::info('Wardrobe store method called');

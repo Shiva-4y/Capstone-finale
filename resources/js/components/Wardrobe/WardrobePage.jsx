@@ -63,6 +63,44 @@ export default function WardrobePage() {
     }
   };
 
+  const handleToggleSale = async (itemId, currentSaleStatus) => {
+    try {
+      const response = await fetch(`/api/wardrobe/${itemId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+        },
+        body: JSON.stringify({
+          name: items.find(item => item.id === itemId)?.name || '',
+          description: items.find(item => item.id === itemId)?.description || '',
+          category: items.find(item => item.id === itemId)?.category || 'shirts',
+          color: items.find(item => item.id === itemId)?.color || '',
+          size: items.find(item => item.id === itemId)?.size || '',
+          brand: items.find(item => item.id === itemId)?.brand || '',
+          condition: items.find(item => item.id === itemId)?.condition || 'good',
+          price: items.find(item => item.id === itemId)?.price || '',
+          is_for_sale: !currentSaleStatus ? '1' : '0'
+        })
+      });
+
+      if (response.ok) {
+        // Update the item in local state
+        setItems(items.map(item => 
+          item.id === itemId 
+            ? { ...item, is_for_sale: !currentSaleStatus }
+            : item
+        ));
+      } else {
+        console.error('Error updating item');
+        alert('Error updating item. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error updating item:', error);
+      alert('Error updating item. Please try again.');
+    }
+  };
+
   // Filter and search items
   const filteredItems = items.filter(item => {
     const matchesFilter = filter === 'all' || 
@@ -503,8 +541,38 @@ export default function WardrobePage() {
                    {/* Action Buttons */}
                    <div style={{
                      display: 'flex',
-                     gap: '10px'
+                     gap: '10px',
+                     flexWrap: 'wrap'
                    }}>
+                     <button
+                       onClick={() => handleToggleSale(item.id, item.is_for_sale)}
+                       style={{
+                         flex: 1,
+                         padding: '10px 16px',
+                         border: `2px solid ${item.is_for_sale ? '#28a745' : '#f1f1f1'}`,
+                         borderRadius: '8px',
+                         background: item.is_for_sale ? '#28a745' : 'white',
+                         color: item.is_for_sale ? 'white' : '#666',
+                         fontSize: '13px',
+                         fontWeight: '600',
+                         cursor: 'pointer',
+                         transition: 'all 0.2s ease'
+                       }}
+                       onMouseEnter={(e) => {
+                         if (!item.is_for_sale) {
+                           e.target.style.borderColor = '#28a745';
+                           e.target.style.background = '#f8f9fa';
+                         }
+                       }}
+                       onMouseLeave={(e) => {
+                         if (!item.is_for_sale) {
+                           e.target.style.borderColor = '#f1f1f1';
+                           e.target.style.background = 'white';
+                         }
+                       }}
+                     >
+                       {item.is_for_sale ? 'Remove from Sale' : 'Mark for Sale'}
+                     </button>
                      <button
                        onClick={() => handleEdit(item)}
                        style={{

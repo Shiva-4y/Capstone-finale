@@ -9,6 +9,7 @@ import Register from './Register';
 import WardrobePage from './Wardrobe/WardrobePage';
 import AddWardrobeItem from './Wardrobe/AddWardrobeItem';
 import EditWardrobeItem from './Wardrobe/EditWardrobeItem';
+import MarketplacePage from './Marketplace/MarketplacePage';
 
 function AppContent() {
   const { user, loading } = useAuth();
@@ -37,9 +38,10 @@ function AppContent() {
       } />
                    <Route path="/login" element={<Login />} />
              <Route path="/register" element={<Register />} />
-                           <Route path="/wardrobe" element={<WardrobePage />} />
-              <Route path="/wardrobe/add" element={<AddWardrobeItem />} />
-              <Route path="/wardrobe/edit/:id" element={<EditWardrobeItem />} />
+                                   <Route path="/wardrobe" element={<WardrobePage />} />
+        <Route path="/wardrobe/add" element={<AddWardrobeItem />} />
+        <Route path="/wardrobe/edit/:id" element={<EditWardrobeItem />} />
+        <Route path="/marketplace" element={<MarketplacePage />} />
     </Routes>
   );
 }

@@ -225,7 +225,7 @@ export default function AuthenticatedHomePage() {
             }}>
               Find amazing deals from sellers in your area. Quality fashion at great prices.
             </p>
-            <Link to="/browse" style={{
+            <Link to="/marketplace" style={{
               background: 'white',
               color: '#667eea',
               padding: '8px 16px',
